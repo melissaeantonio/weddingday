@@ -109,16 +109,13 @@ img { max-width: 100%; }
 .section-heading > p:last-child { color: var(--muted); }
 
 .prewedding { overflow: hidden; background: var(--paper); }
-.prewedding::before { content: ""; position: absolute; top: 32px; right: 32px; bottom: 32px; left: 32px; pointer-events: none; border: 1px solid rgba(8,42,104,.1); }
-.prewedding__layout { position: relative; display: grid; gap: 42px; align-items: center; }
-.prewedding__date { justify-self: center; display: flex; flex-direction: column; align-items: center; justify-content: center; width: min(100%, 280px); aspect-ratio: 1; padding: 25px; color: white; text-align: center; background: var(--navy-deep); box-shadow: var(--shadow); }
-.prewedding__date span { font-size: .67rem; font-weight: 600; letter-spacing: .2em; text-transform: uppercase; }
-.prewedding__date strong { margin: 7px 0 9px; font: 400 5.5rem/.9 var(--display); }
-.prewedding__date i { width: 75%; margin-top: 18px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,.35); color: #ced8cd; font: 500 .8rem/1 var(--serif); letter-spacing: .14em; text-transform: uppercase; }
-.prewedding__copy { text-align: center; }
-.prewedding__copy h3 { margin-top: 27px; font-size: 2rem; }
+.prewedding__event { display: grid; grid-template-columns: 84px 1fr; max-width: 760px; margin-inline: auto; padding: 28px 22px; background: var(--ivory); border: 1px solid var(--line); }
+.prewedding__time { display: flex; flex-direction: column; align-items: center; justify-content: center; padding-right: 20px; color: var(--navy); border-right: 1px solid var(--line); }
+.prewedding__time span { font-size: .62rem; font-weight: 600; letter-spacing: .17em; text-transform: uppercase; }
+.prewedding__time strong { margin-top: 4px; font: 400 1.35rem/1 var(--display); }
+.prewedding__details { padding-left: 22px; }
+.prewedding__details h3 { font-size: 1.8rem; }
 .prewedding__address { color: var(--muted); }
-.prewedding__copy .lead { margin: 26px auto; max-width: 34ch; color: var(--navy-deep); font-size: 1.3rem; font-style: italic; line-height: 1.35; }
 
 .timeline { background: var(--ivory); }
 .timeline__list { position: relative; max-width: 800px; margin-inline: auto; }
@@ -225,9 +222,9 @@ img { max-width: 100%; }
   .hero__date span { width: 125px; }
   .countdown__grid { max-width: 720px; margin-inline: auto; }
   .countdown__grid div { padding-block: 25px 20px; }
-  .prewedding__layout { grid-template-columns: .8fr 1.2fr; gap: 80px; max-width: 930px; }
-  .prewedding__copy { text-align: left; }
-  .prewedding__copy .lead { margin-left: 0; }
+  .prewedding__event { grid-template-columns: 120px 1fr; padding: 38px 34px; }
+  .prewedding__details { padding-left: 34px; }
+  .prewedding__time strong { font-size: 1.7rem; }
   .timeline__list::before { left: 102px; }
   .timeline__item { grid-template-columns: 82px 40px 1fr; }
   .timeline__card { padding-left: 30px; }
