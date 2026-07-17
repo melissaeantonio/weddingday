@@ -209,6 +209,12 @@
     .toLocaleLowerCase('it')
     .trim();
 
+  const canonicalName = (value) => normalizeText(value)
+    .split(/\s+/)
+    .filter(Boolean)
+    .sort((first, second) => first.localeCompare(second, 'it'))
+    .join(' ');
+
   const selectOptions = (values, selected, prompt = 'Seleziona') => [
     `<option value="">${prompt}</option>`,
     ...values.map(([value, label]) => `<option value="${value}"${selected === value ? ' selected' : ''}>${label}</option>`)
@@ -315,8 +321,8 @@
   };
 
   const addAdult = (name, manual = false) => {
-    const normalizedName = normalizeText(name);
-    if (guests.some(guest => guest.type === 'adult' && normalizeText(guest.name) === normalizedName)) {
+    const normalizedName = canonicalName(name);
+    if (guests.some(guest => guest.type === 'adult' && canonicalName(guest.name) === normalizedName)) {
       setRsvpStatus('Questa persona è già stata aggiunta al gruppo.', true);
       return;
     }
@@ -331,19 +337,19 @@
   };
 
   const renderSearchResults = () => {
-    const query = normalizeText(searchInput.value);
+    const query = canonicalName(searchInput.value);
     searchResults.innerHTML = '';
     if (!query) return;
 
-    const selectedNames = new Set(guests.filter(guest => guest.type === 'adult').map(guest => normalizeText(guest.name)));
-    const exactMatch = guestDirectory.find(name => normalizeText(name) === query);
+    const selectedNames = new Set(guests.filter(guest => guest.type === 'adult').map(guest => canonicalName(guest.name)));
+    const exactMatch = guestDirectory.find(name => canonicalName(name) === query);
 
     if (!exactMatch) {
       searchResults.innerHTML = '<p class="search-message">Inserite il nome e il cognome completi per verificare il nominativo.</p>';
       return;
     }
 
-    if (selectedNames.has(normalizeText(exactMatch))) {
+    if (selectedNames.has(canonicalName(exactMatch))) {
       searchResults.innerHTML = '<p class="search-message">Questa persona è già presente nel gruppo.</p>';
       return;
     }
