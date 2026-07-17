@@ -208,6 +208,7 @@
   const lastNameInput = document.querySelector('#manual-last-name');
   const addChildButton = document.querySelector('#add-child');
   const applyFirstGuestButton = document.querySelector('#apply-first-guest');
+  const resetRsvpButton = document.querySelector('#reset-rsvp');
   const closeSearchButton = document.querySelector('#close-adult-search');
   const groupCount = document.querySelector('#rsvp-group-count');
   const rsvpStatus = document.querySelector('#rsvp-status');
@@ -439,14 +440,15 @@
     if (!guest) return;
 
     if (event.target.closest('.remove-guest')) {
-      const adultCount = guests.filter(item => item.type === 'adult').length;
-      if (guest.type === 'adult' && adultCount === 1) {
-        setRsvpStatus('Il gruppo deve contenere almeno un adulto. Aggiungetene un altro prima di rimuovere questo nome.', true);
-        return;
-      }
       guests.splice(guests.indexOf(guest), 1);
       renderGuests();
-      setRsvpStatus('Persona rimossa dal gruppo.');
+      const hasAdults = guests.some(item => item.type === 'adult');
+      if (!hasAdults) {
+        openSearch();
+        setRsvpStatus('Persona rimossa. Cercate un altro adulto per continuare.');
+      } else {
+        setRsvpStatus('Persona rimossa dal gruppo.');
+      }
       return;
     }
 
@@ -468,6 +470,21 @@
     });
     renderGuests();
     setRsvpStatus(`Le scelte dell’ospite 1 sono state applicate a tutto il gruppo.`);
+  });
+
+  resetRsvpButton.addEventListener('click', () => {
+    const generalNote = document.querySelector('#general-note');
+    const hasContent = guests.length > 0 || generalNote.value.trim();
+    if (hasContent && !window.confirm('Vuoi cancellare tutte le persone e le informazioni inserite?')) return;
+    guests.length = 0;
+    nextGuestId = 1;
+    pendingRsvpMessage = '';
+    generalNote.value = '';
+    clearSearch();
+    searchPanel.hidden = false;
+    renderGuests();
+    setRsvpStatus('Il modulo è stato azzerato. Puoi ricominciare dalla ricerca.');
+    searchInput.focus();
   });
 
   const validateRsvp = () => {
