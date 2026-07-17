@@ -137,6 +137,12 @@ img { max-width: 100%; }
 .place-card { position: relative; overflow: hidden; padding: 30px 25px 27px; background: rgba(253,252,248,.78); border: 1px solid rgba(115,130,115,.2); }
 .place-card__number { position: absolute; right: 18px; top: 7px; color: rgba(8,42,104,.08); font: 400 5.2rem/1 var(--display); }
 .place-card h3, .place-card p, .place-card a { position: relative; }
+.place-card--parking { grid-column: 1 / -1; }
+.parking-grid { position: relative; display: grid; margin-top: 24px; border-top: 1px solid var(--line); }
+.parking-option { padding: 25px 0 4px; }
+.parking-option + .parking-option { margin-top: 22px; border-top: 1px solid var(--line); }
+.parking-option__label { margin-bottom: 5px !important; color: var(--sage); font-size: .68rem; font-weight: 600; letter-spacing: .18em; text-transform: uppercase; }
+.parking-option h4 { margin: 0 0 9px; color: var(--navy-deep); font: 500 1.45rem/1.1 var(--serif); }
 .stay { background: var(--paper); }
 .stay__title { padding-bottom: 45px; }
 .stay__title h2 { font-family: var(--script); line-height: .92; }
@@ -235,6 +241,9 @@ img { max-width: 100%; }
   .timeline__time { font-size: 1rem; }
   .card-grid { grid-template-columns: repeat(2, 1fr); }
   .place-card { padding: 37px 28px; }
+  .parking-grid { grid-template-columns: 1fr 1fr; gap: 0; }
+  .parking-option { padding: 28px 35px 5px 0; }
+  .parking-option + .parking-option { margin-top: 0; padding-right: 0; padding-left: 35px; border-top: 0; border-left: 1px solid var(--line); }
   .stay__layout { display: grid; grid-template-columns: .9fr 1.1fr; gap: 90px; align-items: start; }
   .stay__title { position: sticky; top: 100px; padding-bottom: 0; }
   .editorial-grid { grid-template-columns: repeat(3, 1fr); }
@@ -244,7 +253,7 @@ img { max-width: 100%; }
 }
 
 @media (min-width: 1200px) {
-  .card-grid { grid-template-columns: repeat(4, 1fr); }
+  .card-grid { grid-template-columns: repeat(2, 1fr); }
 }
 
 @media (prefers-reduced-motion: reduce) {
