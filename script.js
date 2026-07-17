@@ -192,6 +192,7 @@
   const firstNameInput = document.querySelector('#manual-first-name');
   const lastNameInput = document.querySelector('#manual-last-name');
   const addChildButton = document.querySelector('#add-child');
+  const applyFirstGuestButton = document.querySelector('#apply-first-guest');
   const closeSearchButton = document.querySelector('#close-adult-search');
   const groupCount = document.querySelector('#rsvp-group-count');
   const rsvpStatus = document.querySelector('#rsvp-status');
@@ -243,20 +244,11 @@
         </div>` : '';
       const childNeeds = guest.type === 'child' ? `
           <div class="guest-field">
-            <label for="guest-needs-${guest.id}">Necessità del bambino</label>
+            <label for="guest-needs-${guest.id}">Altre necessità</label>
             <input id="guest-needs-${guest.id}" class="guest-needs" type="text" value="${escapeHtml(guest.needs)}" placeholder="Es. seggiolino">
           </div>` : '';
 
-      return `
-        <article class="rsvp-guest-card" data-guest-id="${guest.id}">
-          <div class="guest-card__heading">
-            <div>
-              <h3>${title}</h3>
-              ${guest.type === 'child' ? '<p>Inserite i dati del bambino</p>' : ''}
-            </div>
-            <button class="guest-remove remove-guest" type="button">Rimuovi</button>
-          </div>
-          ${identityFields}
+      const participationFields = guest.type === 'adult' ? `
           <div class="guest-fields">
             <div class="guest-field">
               <label for="guest-wedding-${guest.id}">Matrimonio</label>
@@ -270,7 +262,20 @@
               <label for="guest-nights-${guest.id}">Pernottamento</label>
               <select id="guest-nights-${guest.id}" class="guest-nights">${selectOptions([['0', '0 notti'], ['1', '1 notte · 26–27 settembre'], ['2', '2 notti · 25–27 settembre']], guest.nights)}</select>
             </div>
+          </div>` : '';
+
+      return `
+        <article class="rsvp-guest-card" data-guest-id="${guest.id}">
+          <div class="guest-card__heading">
+            <div>
+              <h3>${title}</h3>
+              ${guest.type === 'child' ? '<p>Inserite i dati del bambino</p>' : ''}
+            </div>
+            <button class="guest-remove remove-guest" type="button">Rimuovi</button>
           </div>
+          ${identityFields}
+          ${guest.type === 'child' ? '<p class="child-inherited-note">Matrimonio, cena e pernottamento seguiranno le scelte dell’ospite 1.</p>' : ''}
+          ${participationFields}
           <div class="guest-details${guest.type === 'adult' ? ' guest-details--single' : ''}">
             <div class="guest-field">
               <label for="guest-allergies-${guest.id}">Allergie o intolleranze</label>
@@ -278,13 +283,13 @@
             </div>
             ${childNeeds}
           </div>
-          <button class="apply-group" type="button">Applica matrimonio, cena e pernottamento a tutto il gruppo</button>
         </article>`;
     }).join('');
 
     const adultCount = guests.filter(guest => guest.type === 'adult').length;
     const childCount = guests.filter(guest => guest.type === 'child').length;
     addChildButton.disabled = adultCount === 0;
+    applyFirstGuestButton.disabled = adultCount < 2;
     closeSearchButton.hidden = adultCount === 0;
     groupCount.textContent = guests.length === 0
       ? 'Nessuna persona aggiunta'
@@ -294,11 +299,12 @@
   const readGuestCard = (card) => {
     const guest = guests.find(item => item.id === Number(card.dataset.guestId));
     if (!guest) return;
-    guest.wedding = card.querySelector('.guest-wedding').value;
-    guest.dinner = card.querySelector('.guest-dinner').value;
-    guest.nights = card.querySelector('.guest-nights').value;
     guest.allergies = card.querySelector('.guest-allergies').value.trim();
-    if (guest.type === 'child') {
+    if (guest.type === 'adult') {
+      guest.wedding = card.querySelector('.guest-wedding').value;
+      guest.dinner = card.querySelector('.guest-dinner').value;
+      guest.nights = card.querySelector('.guest-nights').value;
+    } else {
       guest.name = card.querySelector('.guest-name').value.trim();
       guest.age = card.querySelector('.guest-age').value;
       guest.needs = card.querySelector('.guest-needs').value.trim();
@@ -425,20 +431,24 @@
       return;
     }
 
-    if (event.target.closest('.apply-group')) {
-      if (!guest.wedding || !guest.dinner || guest.nights === '') {
-        setRsvpStatus('Selezionate prima matrimonio, cena e pernottamento per questa persona.', true);
-        card.querySelector('select:invalid, select')?.focus();
-        return;
-      }
-      guests.forEach(item => {
-        item.wedding = guest.wedding;
-        item.dinner = guest.dinner;
-        item.nights = guest.nights;
-      });
-      renderGuests();
-      setRsvpStatus(`Scelte applicate a ${guests.length} persone. Potete ancora modificarle singolarmente.`);
+  });
+
+  applyFirstGuestButton.addEventListener('click', () => {
+    guestList.querySelectorAll('[data-guest-id]').forEach(readGuestCard);
+    const adults = guests.filter(guest => guest.type === 'adult');
+    const firstGuest = adults[0];
+    if (!firstGuest || !firstGuest.wedding || !firstGuest.dinner || firstGuest.nights === '') {
+      setRsvpStatus('Completate prima matrimonio, cena e pernottamento dell’ospite 1.', true);
+      guestList.querySelector(`[data-guest-id="${firstGuest?.id}"] select`)?.focus();
+      return;
     }
+    adults.slice(1).forEach((guest) => {
+      guest.wedding = firstGuest.wedding;
+      guest.dinner = firstGuest.dinner;
+      guest.nights = firstGuest.nights;
+    });
+    renderGuests();
+    setRsvpStatus(`Le scelte dell’ospite 1 sono state applicate a tutto il gruppo.`);
   });
 
   const validateRsvp = () => {
@@ -461,7 +471,7 @@
         card.querySelector('.guest-age').focus();
         return false;
       }
-      if (!guest.wedding || !guest.dinner || guest.nights === '') {
+      if (guest.type === 'adult' && (!guest.wedding || !guest.dinner || guest.nights === '')) {
         setRsvpStatus(`Completate matrimonio, cena e pernottamento per ${guest.name || 'ogni persona'}.`, true);
         const missingField = !guest.wedding ? '.guest-wedding' : !guest.dinner ? '.guest-dinner' : '.guest-nights';
         card.querySelector(missingField).focus();
@@ -474,6 +484,15 @@
   rsvpForm.addEventListener('submit', (event) => {
     event.preventDefault();
     if (!validateRsvp()) return;
+
+    const dinnerOnlyGuests = guests.filter(guest => guest.type === 'adult' && guest.dinner === 'yes' && guest.wedding === 'no');
+    if (dinnerOnlyGuests.length > 0) {
+      const names = dinnerOnlyGuests.map(guest => guest.name).join(', ');
+      const confirmed = window.confirm(
+        `${names}: avete indicato la partecipazione alla cena pre-wedding ma non al matrimonio. Questa scelta è consentita. Confermate?`
+      );
+      if (!confirmed) return;
+    }
 
     const lodgingLabels = {
       '0': '0 notti',
@@ -489,11 +508,15 @@
 
     guests.forEach((guest, index) => {
       lines.push(`${index + 1}. ${guest.name}${guest.type === 'child' ? ` — bambino, ${guest.age} ${guest.age === '1' ? 'anno' : 'anni'}` : ''}`);
-      lines.push(`   Matrimonio: ${guest.wedding === 'yes' ? 'Partecipa' : 'Non partecipa'}`);
-      lines.push(`   Cena pre-wedding: ${guest.dinner === 'yes' ? 'Partecipa' : 'Non partecipa'}`);
-      lines.push(`   Pernottamento: ${lodgingLabels[guest.nights]}`);
+      if (guest.type === 'adult') {
+        lines.push(`   Matrimonio: ${guest.wedding === 'yes' ? 'Partecipa' : 'Non partecipa'}`);
+        lines.push(`   Cena pre-wedding: ${guest.dinner === 'yes' ? 'Partecipa' : 'Non partecipa'}`);
+        lines.push(`   Pernottamento: ${lodgingLabels[guest.nights]}`);
+      } else {
+        lines.push('   Matrimonio, cena e pernottamento: come ospite 1');
+      }
       lines.push(`   Allergie o intolleranze: ${guest.allergies || 'Nessuna'}`);
-      if (guest.type === 'child') lines.push(`   Necessità del bambino: ${guest.needs || 'Nessuna'}`);
+      if (guest.type === 'child') lines.push(`   Altre necessità: ${guest.needs || 'Nessuna'}`);
       lines.push('');
     });
 

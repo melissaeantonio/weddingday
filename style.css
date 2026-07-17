@@ -205,13 +205,15 @@ img { max-width: 100%; }
 .guest-card__heading { display: flex; justify-content: space-between; align-items: flex-start; gap: 15px; margin-bottom: 22px; }
 .guest-card__heading h3 { margin: 0; font-size: 1.55rem; overflow-wrap: anywhere; }
 .guest-card__heading p { margin: 4px 0 0; color: var(--muted); font-size: .78rem; }
+.child-inherited-note { margin: -4px 0 17px !important; color: var(--sage); font-size: .78rem; font-style: italic; }
 .guest-remove, .manual-toggle { padding: 5px 0; color: var(--navy); border: 0; border-bottom: 1px solid rgba(8,42,104,.35); background: transparent; font-size: .67rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; cursor: pointer; }
 .guest-fields, .guest-details { display: grid; gap: 14px; }
 .guest-details { margin-bottom: 14px; }
 .guest-field label { display: block; margin-bottom: 6px; color: var(--navy-deep); font-size: .78rem; font-weight: 600; letter-spacing: .04em; }
 .guest-field input::placeholder { color: #929a96; opacity: 1; }
-.apply-group { width: 100%; min-height: 45px; margin-top: 18px; padding: 10px 12px; color: var(--navy); border: 1px solid rgba(8,42,104,.25); background: var(--sage-pale); font-size: .68rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; cursor: pointer; transition: .2s; }
-.apply-group:hover { color: white; border-color: var(--navy); background: var(--navy); }
+.apply-first-guest { width: 100%; min-height: 50px; margin-top: 18px; padding: 12px 15px; color: var(--navy); border: 1px solid rgba(8,42,104,.28); background: var(--sage-pale); font-size: .7rem; font-weight: 600; letter-spacing: .09em; text-transform: uppercase; cursor: pointer; transition: .2s; }
+.apply-first-guest:hover:not(:disabled) { color: white; border-color: var(--navy); background: var(--navy); }
+.apply-first-guest:disabled { opacity: .48; cursor: not-allowed; }
 .rsvp-add-actions { display: grid; gap: 10px; margin-top: 18px; }
 .rsvp-add-actions .button { width: 100%; }
 .button:disabled { opacity: .45; cursor: not-allowed; transform: none; }
