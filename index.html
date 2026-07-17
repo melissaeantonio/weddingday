@@ -3,26 +3,27 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>Melissa & Antonio — 26 settembre 2026</title>
+  <title>Melissa &amp; Antonio — 26 settembre 2026</title>
   <meta name="description" content="Tutte le informazioni per celebrare insieme il matrimonio di Melissa e Antonio, sabato 26 settembre 2026.">
   <meta name="theme-color" content="#f7f5ef">
   <meta property="og:type" content="website">
   <meta property="og:locale" content="it_IT">
-  <meta property="og:title" content="Melissa & Antonio — 26 settembre 2026">
+  <meta property="og:title" content="Melissa &amp; Antonio — 26 settembre 2026">
   <meta property="og:description" content="Il nostro invito digitale: programma, luoghi e informazioni per vivere insieme un giorno speciale.">
   <meta property="og:image" content="assets/images/invito-melissa-antonio.png">
   <link rel="icon" type="image/png" href="assets/images/favicon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Italiana&family=Parisienne&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&amp;family=Italiana&amp;family=Parisienne&amp;display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
+  <script src="guest-data.js" defer></script>
   <script src="script.js" defer></script>
 </head>
 <body class="is-locked">
   <div class="gate" id="gate" role="dialog" aria-modal="true" aria-labelledby="gate-title">
     <div class="gate__card">
       <p class="eyebrow">26 · 09 · 2026</p>
-      <div class="monogram" aria-hidden="true">M <span>&</span> A</div>
+      <div class="monogram" aria-hidden="true">M <span>&amp;</span> A</div>
       <h1 id="gate-title">Benvenuti</h1>
       <p>Un piccolo angolo dedicato al nostro giorno più bello, da vivere e custodire insieme.</p>
       <form class="gate__form" id="password-form" novalidate>
@@ -39,7 +40,7 @@
 
   <div class="site" id="site" aria-hidden="true">
     <header class="topbar" id="topbar">
-      <a class="topbar__brand" href="#home" aria-label="Melissa e Antonio, torna all'inizio">M <span>&</span> A</a>
+      <a class="topbar__brand" href="#home" aria-label="Melissa e Antonio, torna all'inizio">M <span>&amp;</span> A</a>
       <button class="menu-toggle" id="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav">
         <span class="sr-only">Apri il menu</span>
         <span></span><span></span>
@@ -57,7 +58,7 @@
       <section class="hero" id="home" aria-labelledby="hero-title">
         <div class="hero__content">
           <p class="eyebrow hero__eyebrow reveal">Siamo felici di invitarvi al nostro matrimonio</p>
-          <h1 id="hero-title" class="reveal"><span>Melissa</span><i>&</i><span>Antonio</span></h1>
+          <h1 id="hero-title" class="reveal"><span>Melissa</span><i>&amp;</i><span>Antonio</span></h1>
           <div class="hero__date reveal">
             <span>Sabato</span><strong>26</strong><span>Settembre<br>2026</span>
           </div>
@@ -287,57 +288,78 @@
       </section>
 
       <section class="section rsvp" id="rsvp">
-        <div class="section__inner section__inner--narrow reveal">
-          <p class="eyebrow">Entro il 26 agosto 2026</p>
-          <h2>Conferma la tua presenza</h2>
-          <p>Compila i campi: prepareremo per te un messaggio da inviarci su WhatsApp.</p>
-          <form class="rsvp-form" id="rsvp-form">
-            <div class="form-field">
-              <label for="guest-name">Nome e cognome del referente</label>
-              <input id="guest-name" name="guest-name" type="text" autocomplete="name" required>
-            </div>
-            <fieldset>
-              <legend>Parteciperai al matrimonio?</legend>
-              <div class="choice-row">
-                <label><input type="radio" name="attendance" value="Sì, parteciperò" required><span>Sì, con gioia</span></label>
-                <label><input type="radio" name="attendance" value="Non potrò partecipare"><span>Non potrò esserci</span></label>
+        <div class="section__inner reveal">
+          <div class="section-heading rsvp__heading">
+            <p class="eyebrow">Entro il 26 agosto 2026</p>
+            <h2>Conferma la vostra presenza</h2>
+            <p>Cercate gli adulti invitati, aggiungete eventuali bambini e indicate le preferenze di ciascuno.</p>
+          </div>
+          <form class="rsvp-form" id="rsvp-form" novalidate>
+            <div class="rsvp-step-heading">
+              <span aria-hidden="true">1</span>
+              <div>
+                <h3>Chi farà parte del gruppo?</h3>
+                <p>Inserite nome e cognome completi di ogni adulto. Il nominativo apparirà soltanto in caso di corrispondenza esatta.</p>
               </div>
-            </fieldset>
-            <div class="guest-count-grid">
+            </div>
+
+            <div class="rsvp-guest-list" id="rsvp-guest-list" aria-live="polite"></div>
+
+            <div class="rsvp-add-actions">
+              <button class="button button--primary" id="add-adult" type="button">＋ Aggiungi adulto</button>
+              <button class="button button--outline" id="add-child" type="button" disabled>＋ Aggiungi bambino</button>
+            </div>
+
+            <section class="guest-search-panel" id="adult-search-panel" aria-labelledby="adult-search-title">
+              <div class="guest-search-panel__heading">
+                <div>
+                  <p class="card-kicker">Aggiungi adulto</p>
+                  <h3 id="adult-search-title">Cerca un invitato</h3>
+                </div>
+                <button class="guest-remove" id="close-adult-search" type="button" aria-label="Chiudi la ricerca">Chiudi</button>
+              </div>
               <div class="form-field">
-                <label for="adult-guests">Numero di adulti <span>(incluso il referente)</span></label>
-                <input id="adult-guests" name="adult-guests" type="number" inputmode="numeric" min="1" max="20" value="0" required>
+                <label for="adult-search">Nome e cognome completi</label>
+                <input id="adult-search" type="search" autocomplete="off" placeholder="Es. Nome Cognome" aria-controls="adult-search-results" aria-autocomplete="list">
               </div>
-              <div class="form-field">
-                <label for="child-guests">Numero di bambini</label>
-                <input id="child-guests" name="child-guests" type="number" inputmode="numeric" min="0" max="20" value="0" required>
+              <div class="adult-search-results" id="adult-search-results" role="listbox" aria-label="Invitati trovati"></div>
+              <button class="manual-toggle" id="show-manual-adult" type="button">Non trovi il nome? Inseriscilo manualmente</button>
+              <div class="manual-adult-fields" id="manual-adult-fields" hidden>
+                <div class="form-field">
+                  <label for="manual-first-name">Nome</label>
+                  <input id="manual-first-name" type="text" autocomplete="given-name">
+                </div>
+                <div class="form-field">
+                  <label for="manual-last-name">Cognome</label>
+                  <input id="manual-last-name" type="text" autocomplete="family-name">
+                </div>
+                <button class="button button--primary" id="confirm-manual-adult" type="button">Aggiungi adulto</button>
+              </div>
+            </section>
+
+            <div class="rsvp-step-heading rsvp-step-heading--notes">
+              <span aria-hidden="true">2</span>
+              <div>
+                <h3>Un ultimo pensiero</h3>
+                <p>Questo spazio è per eventuali richieste generali o per lasciarci un messaggio.</p>
               </div>
             </div>
-            <div class="form-field">
-              <label for="party-names">Nomi degli accompagnatori <span>(indicate anche l'età dei bambini)</span></label>
-              <textarea id="party-names" name="party-names" rows="3" placeholder="Es. Mario Rossi; Giulia Rossi, 4 anni" aria-describedby="party-names-requirement"></textarea>
-              <small class="field-requirement" id="party-names-requirement" aria-live="polite"></small>
+            <div class="form-field rsvp-general-note">
+              <label for="general-note">Note generali o un messaggio per gli sposi <span>(facoltativo)</span></label>
+              <textarea id="general-note" rows="4" placeholder="Scrivete qui altre necessità o lasciateci un messaggio"></textarea>
             </div>
-            <fieldset>
-              <legend>Parteciperai alla cena pre-wedding?</legend>
-              <div class="choice-row">
-                <label><input type="radio" name="prewedding" value="Sì" required><span>Sì</span></label>
-                <label><input type="radio" name="prewedding" value="No"><span>No</span></label>
-              </div>
-            </fieldset>
-            <div class="form-field">
-              <label for="guest-notes">Allergie, intolleranze o altre richieste <span>(facoltativo)</span></label>
-              <textarea id="guest-notes" name="guest-notes" rows="4" placeholder="Indicate esigenze alimentari o richieste come passeggini, seggiolini e altre necessità"></textarea>
-            </div>
+
+            <p class="rsvp-group-count" id="rsvp-group-count">Nessuna persona aggiunta</p>
+            <p class="rsvp-status" id="rsvp-status" role="status" aria-live="polite"></p>
             <button class="button button--primary button--wide" type="submit">Prepara il messaggio RSVP</button>
-            <p class="form-hint">Si aprirà WhatsApp: potrai scegliere la chat con gli sposi prima dell'invio.</p>
+            <p class="form-hint">Si aprirà WhatsApp: potrete scegliere la chat con gli sposi prima dell'invio.</p>
           </form>
         </div>
       </section>
     </main>
 
     <footer class="footer">
-      <div class="monogram monogram--footer" aria-hidden="true">M <span>&</span> A</div>
+      <div class="monogram monogram--footer" aria-hidden="true">M <span>&amp;</span> A</div>
       <p class="footer__date">26 settembre 2026</p>
       <button class="lock-button" id="lock-site" type="button">Blocca sito</button>
     </footer>
