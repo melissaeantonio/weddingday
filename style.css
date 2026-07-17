@@ -192,6 +192,7 @@ img { max-width: 100%; }
 .form-field label span { color: var(--muted); font-weight: 400; }
 .form-field input, .form-field textarea { display: block; width: 100%; padding: 13px 14px; color: var(--ink); border: 1px solid rgba(8,42,104,.22); border-radius: 0; outline: 0; background: rgba(255,255,255,.72); transition: .2s; }
 .form-field textarea::placeholder { color: #929a96; opacity: 1; }
+.field-requirement { display: block; min-height: 20px; margin-top: 6px; color: var(--navy); font-size: .74rem; font-weight: 600; }
 .form-field input:focus, .form-field textarea:focus { border-color: var(--navy); box-shadow: 0 0 0 3px rgba(8,42,104,.08); }
 .rsvp-form legend { margin-bottom: 10px; color: var(--navy-deep); font-size: .83rem; font-weight: 600; letter-spacing: .05em; }
 .choice-row { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }

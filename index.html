@@ -306,7 +306,7 @@
             <div class="guest-count-grid">
               <div class="form-field">
                 <label for="adult-guests">Numero di adulti <span>(incluso il referente)</span></label>
-                <input id="adult-guests" name="adult-guests" type="number" inputmode="numeric" min="1" max="20" value="1" required>
+                <input id="adult-guests" name="adult-guests" type="number" inputmode="numeric" min="1" max="20" value="0" required>
               </div>
               <div class="form-field">
                 <label for="child-guests">Numero di bambini</label>
@@ -315,7 +315,8 @@
             </div>
             <div class="form-field">
               <label for="party-names">Nomi degli accompagnatori <span>(indicate anche l'età dei bambini)</span></label>
-              <textarea id="party-names" name="party-names" rows="3" placeholder="Es. Mario Rossi; Giulia Rossi, 4 anni"></textarea>
+              <textarea id="party-names" name="party-names" rows="3" placeholder="Es. Mario Rossi; Giulia Rossi, 4 anni" aria-describedby="party-names-requirement"></textarea>
+              <small class="field-requirement" id="party-names-requirement" aria-live="polite"></small>
             </div>
             <fieldset>
               <legend>Parteciperai alla cena pre-wedding?</legend>

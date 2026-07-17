@@ -121,7 +121,39 @@
   updateCountdown();
   window.setInterval(updateCountdown, 1000);
 
-  document.querySelector('#rsvp-form').addEventListener('submit', (event) => {
+  const rsvpForm = document.querySelector('#rsvp-form');
+  const guestName = document.querySelector('#guest-name');
+  const adultGuests = document.querySelector('#adult-guests');
+  const childGuests = document.querySelector('#child-guests');
+  const partyNamesField = document.querySelector('#party-names');
+  const partyNamesRequirement = document.querySelector('#party-names-requirement');
+
+  const updatePartyNamesRequirement = () => {
+    const attendance = rsvpForm.querySelector('input[name="attendance"]:checked')?.value;
+    const totalGuests = Number(adultGuests.value || 0) + Number(childGuests.value || 0);
+    const partyNamesAreRequired = attendance !== 'Non potrò partecipare' && totalGuests > 1;
+
+    partyNamesField.required = partyNamesAreRequired;
+    partyNamesField.setAttribute('aria-required', String(partyNamesAreRequired));
+    partyNamesRequirement.textContent = partyNamesAreRequired
+      ? 'Obbligatorio perché il gruppo è composto da più persone.'
+      : '';
+  };
+
+  const syncReferentCount = () => {
+    if (guestName.value.trim() && Number(adultGuests.value) < 1) adultGuests.value = '1';
+    updatePartyNamesRequirement();
+  };
+  guestName.addEventListener('input', syncReferentCount);
+  guestName.addEventListener('change', syncReferentCount);
+  adultGuests.addEventListener('input', updatePartyNamesRequirement);
+  childGuests.addEventListener('input', updatePartyNamesRequirement);
+  rsvpForm.querySelectorAll('input[name="attendance"]').forEach((field) => {
+    field.addEventListener('change', updatePartyNamesRequirement);
+  });
+  updatePartyNamesRequirement();
+
+  rsvpForm.addEventListener('submit', (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     const prewedding = data.get('prewedding') || 'Non indicato';
