@@ -362,6 +362,20 @@
       </section>
     </main>
 
+    <div class="rsvp-recipient-dialog" id="rsvp-recipient-dialog" role="dialog" aria-modal="true" aria-labelledby="rsvp-recipient-title" hidden>
+      <button class="rsvp-recipient-dialog__backdrop" id="close-rsvp-recipient-backdrop" type="button" aria-label="Chiudi"></button>
+      <div class="rsvp-recipient-dialog__card">
+        <p class="eyebrow">Il messaggio è pronto</p>
+        <h2 id="rsvp-recipient-title">A chi vuoi inviarlo?</h2>
+        <p>Scegli uno di noi e si aprirà direttamente la chat WhatsApp con il vostro RSVP già compilato.</p>
+        <div class="rsvp-recipient-options">
+          <button class="button button--primary" type="button" data-rsvp-recipient="melissa">Invia a Melissa</button>
+          <button class="button button--outline" type="button" data-rsvp-recipient="antonio">Invia ad Antonio</button>
+        </div>
+        <button class="guest-remove rsvp-recipient-dialog__close" id="close-rsvp-recipient" type="button">Annulla</button>
+      </div>
+    </div>
+
     <footer class="footer">
       <div class="monogram monogram--footer" aria-hidden="true">M <span>&amp;</span> A</div>
       <p class="footer__date">26 settembre 2026</p>

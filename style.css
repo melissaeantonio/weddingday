@@ -233,6 +233,17 @@ img { max-width: 100%; }
 .rsvp-status { min-height: 28px; margin: 8px 0 10px !important; color: var(--navy); font-size: .82rem; font-weight: 600; text-align: center; }
 .rsvp-status.is-error { color: #9c3f44; }
 .form-hint { margin: 11px 0 0 !important; color: var(--muted); font-size: .78rem; text-align: center; }
+.rsvp-recipient-dialog { position: fixed; z-index: 1200; inset: 0; display: grid; place-items: center; padding: 22px; }
+.rsvp-recipient-dialog[hidden] { display: none; }
+.rsvp-recipient-dialog__backdrop { position: absolute; inset: 0; width: 100%; border: 0; background: rgba(6,29,73,.68); backdrop-filter: blur(6px); cursor: pointer; }
+.rsvp-recipient-dialog__card { position: relative; width: min(100%, 480px); padding: 34px 25px 28px; color: var(--ink); text-align: center; background: var(--paper); border: 1px solid rgba(255,255,255,.55); box-shadow: 0 28px 90px rgba(6,29,73,.3); animation: gate-in .35s ease both; }
+.rsvp-recipient-dialog__card::before { content: ""; position: absolute; inset: 8px; pointer-events: none; border: 1px solid rgba(115,130,115,.22); }
+.rsvp-recipient-dialog__card > * { position: relative; }
+.rsvp-recipient-dialog h2 { margin: 0 0 12px; color: var(--navy); font: 400 2.25rem/1.05 var(--display); }
+.rsvp-recipient-dialog p:not(.eyebrow) { margin: 0 auto 25px; max-width: 36ch; color: var(--muted); font-size: .92rem; }
+.rsvp-recipient-options { display: grid; gap: 10px; }
+.rsvp-recipient-options .button { width: 100%; }
+.rsvp-recipient-dialog__close { margin-top: 22px; }
 .footer { position: relative; padding: 75px 22px calc(35px + env(safe-area-inset-bottom, 0px)); color: white; text-align: center; background: var(--navy-deep); }
 .monogram--footer { color: white; font-size: 1.8rem; }
 .footer__date { margin: 20px 0 2px; color: #c3cec3; font-size: .74rem; letter-spacing: .2em; text-transform: uppercase; }
@@ -289,6 +300,7 @@ img { max-width: 100%; }
   .guest-search-panel { padding: 30px; }
   .manual-adult-fields { grid-template-columns: 1fr 1fr; align-items: end; }
   .manual-adult-fields .button { grid-column: 1 / -1; width: auto; }
+  .rsvp-recipient-options { grid-template-columns: 1fr 1fr; }
 }
 
 @media (min-width: 1200px) {

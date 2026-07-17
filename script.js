@@ -13,6 +13,7 @@
   const passwordInput = document.querySelector('#password');
   const passwordError = document.querySelector('#password-error');
   let guestDirectory = [];
+  let rsvpContacts = {};
 
   const base64ToBytes = (value) => Uint8Array.from(atob(value), character => character.charCodeAt(0));
   const bytesToBase64 = (value) => btoa(String.fromCharCode(...new Uint8Array(value)));
@@ -49,6 +50,18 @@
     return names;
   };
 
+  const decryptContacts = async (key) => {
+    const plaintext = await crypto.subtle.decrypt(
+      { name: 'AES-GCM', iv: base64ToBytes(DIRECTORY_DATA.contacts.iv) },
+      key,
+      base64ToBytes(DIRECTORY_DATA.contacts.ciphertext)
+    );
+    const contacts = JSON.parse(decoder.decode(plaintext));
+    const validNumber = value => typeof value === 'string' && /^\d{10,15}$/.test(value);
+    if (!validNumber(contacts.melissa) || !validNumber(contacts.antonio)) throw new Error('Invalid contacts');
+    return contacts;
+  };
+
   const unlockSite = (animate = true) => {
     document.body.classList.remove('is-locked');
     site.removeAttribute('aria-hidden');
@@ -67,6 +80,7 @@
     try {
       const key = await crypto.subtle.importKey('raw', base64ToBytes(storedKey), { name: 'AES-GCM' }, true, ['encrypt', 'decrypt']);
       guestDirectory = await decryptDirectory(key);
+      rsvpContacts = await decryptContacts(key);
       unlockSite(false);
     } catch {
       sessionStorage.removeItem(ACCESS_KEY);
@@ -90,6 +104,7 @@
 
       const key = await deriveDirectoryKey(submittedPassword);
       guestDirectory = await decryptDirectory(key);
+      rsvpContacts = await decryptContacts(key);
       const rawKey = await crypto.subtle.exportKey('raw', key);
       sessionStorage.setItem(DIRECTORY_KEY, bytesToBase64(rawKey));
       sessionStorage.setItem(ACCESS_KEY, 'granted');
@@ -196,8 +211,12 @@
   const closeSearchButton = document.querySelector('#close-adult-search');
   const groupCount = document.querySelector('#rsvp-group-count');
   const rsvpStatus = document.querySelector('#rsvp-status');
+  const recipientDialog = document.querySelector('#rsvp-recipient-dialog');
+  const closeRecipientButton = document.querySelector('#close-rsvp-recipient');
+  const closeRecipientBackdrop = document.querySelector('#close-rsvp-recipient-backdrop');
   const guests = [];
   let nextGuestId = 1;
+  let pendingRsvpMessage = '';
 
   const escapeHtml = (value) => String(value).replace(/[&<>'"]/g, character => ({
     '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
@@ -481,6 +500,36 @@
     return true;
   };
 
+  const openRecipientDialog = () => {
+    recipientDialog.hidden = false;
+    document.body.classList.add('is-locked');
+    recipientDialog.querySelector('[data-rsvp-recipient]')?.focus();
+  };
+
+  const closeRecipientDialog = () => {
+    recipientDialog.hidden = true;
+    document.body.classList.remove('is-locked');
+  };
+
+  closeRecipientButton.addEventListener('click', closeRecipientDialog);
+  closeRecipientBackdrop.addEventListener('click', closeRecipientDialog);
+  recipientDialog.addEventListener('click', (event) => {
+    const button = event.target.closest('[data-rsvp-recipient]');
+    if (!button) return;
+    const phoneNumber = rsvpContacts[button.dataset.rsvpRecipient];
+    if (!phoneNumber || !pendingRsvpMessage) {
+      closeRecipientDialog();
+      setRsvpStatus('Non è stato possibile aprire WhatsApp. Bloccate e riaprite il sito, poi riprovate.', true);
+      return;
+    }
+    window.open(`https://wa.me/${phoneNumber}?text=${encodeURIComponent(pendingRsvpMessage)}`, '_blank', 'noopener');
+    closeRecipientDialog();
+  });
+
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && !recipientDialog.hidden) closeRecipientDialog();
+  });
+
   rsvpForm.addEventListener('submit', (event) => {
     event.preventDefault();
     if (!validateRsvp()) return;
@@ -523,7 +572,8 @@
     const generalNote = document.querySelector('#general-note').value.trim();
     lines.push(`Note o messaggio: ${generalNote || 'Nessuno'}`);
     lines.push('', 'Un abbraccio!');
-    window.open(`https://wa.me/?text=${encodeURIComponent(lines.join('\n'))}`, '_blank', 'noopener');
+    pendingRsvpMessage = lines.join('\n');
+    openRecipientDialog();
   });
 
   const copyIbanButton = document.querySelector('#copy-iban');
