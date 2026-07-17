@@ -80,6 +80,8 @@ img { max-width: 100%; }
 .hero__date span { width: 96px; font: 600 .64rem/1.45 var(--serif); letter-spacing: .16em; }
 .hero__date strong { border-inline: 1px solid rgba(8,42,104,.32); font: 400 3.8rem/1 var(--display); }
 .hero__place { margin: 0 0 25px; color: var(--muted); font-size: .78rem; letter-spacing: .17em; text-transform: uppercase; }
+.hero__actions { display: flex; flex-direction: column; align-items: center; gap: 11px; }
+.hero__actions .button { width: min(100%, 280px); }
 .scroll-cue { position: absolute; z-index: 2; bottom: 27px; left: 50%; width: 30px; height: 38px; transform: translateX(-50%); }
 .scroll-cue span { position: absolute; top: 0; left: 50%; width: 1px; height: 28px; background: var(--navy); animation: scroll-line 2s infinite; }
 
@@ -219,6 +221,8 @@ img { max-width: 100%; }
   .hero h1 span { font-size: clamp(6.5rem, 11vw, 9rem); }
   .hero__eyebrow { margin-bottom: 42px; }
   .hero h1 i { margin: 15px 0; }
+  .hero__actions { flex-direction: row; justify-content: center; }
+  .hero__actions .button { width: auto; min-width: 235px; }
   .hero__date span { width: 125px; }
   .countdown__grid { max-width: 720px; margin-inline: auto; }
   .countdown__grid div { padding-block: 25px 20px; }
