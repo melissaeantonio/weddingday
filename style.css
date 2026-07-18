@@ -58,8 +58,8 @@ img { max-width: 100%; }
 .topbar.is-scrolled { height: calc(54px + var(--safe-top)); background: rgba(247,245,239,.9); box-shadow: 0 1px 16px rgba(8,42,104,.08); backdrop-filter: blur(14px); }
 .topbar__brand { z-index: 2; text-decoration: none; font: 400 1rem/1 var(--display); letter-spacing: .12em; }
 .topbar__brand span { color: var(--sage); font-family: var(--serif); font-style: italic; }
-.menu-toggle { z-index: 2; display: grid; gap: 6px; padding: 11px 4px; border: 0; background: none; cursor: pointer; }
-.menu-toggle span:not(.sr-only) { display: block; width: 26px; height: 1px; background: currentColor; transition: transform .3s; }
+.menu-toggle { z-index: 2; display: grid; gap: 6px; padding: 11px 4px; border: 0; background: none; color: var(--navy-deep); cursor: pointer; }
+.menu-toggle span:not(.sr-only) { display: block; width: 26px; height: 2px; border-radius: 2px; background: currentColor; transition: transform .3s, opacity .3s; }
 .menu-toggle[aria-expanded="true"] span:nth-child(2) { transform: translateY(3.5px) rotate(45deg); }
 .menu-toggle[aria-expanded="true"] span:nth-child(3) { transform: translateY(-3.5px) rotate(-45deg); }
 .nav { position: fixed; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 23px; background: rgba(247,245,239,.97); opacity: 0; visibility: hidden; transform: translateY(-10px); transition: .3s ease; }
