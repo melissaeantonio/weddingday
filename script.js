@@ -12,6 +12,7 @@
   const passwordForm = document.querySelector('#password-form');
   const passwordInput = document.querySelector('#password');
   const passwordError = document.querySelector('#password-error');
+  const contactButtons = document.querySelectorAll('.contact-call');
   let guestDirectory = [];
   let rsvpContacts = {};
 
@@ -58,8 +59,14 @@
     );
     const contacts = JSON.parse(decoder.decode(plaintext));
     const validNumber = value => typeof value === 'string' && /^\d{10,15}$/.test(value);
-    if (!validNumber(contacts.melissa) || !validNumber(contacts.antonio)) throw new Error('Invalid contacts');
+    if (!['melissa', 'antonio', 'nicola', 'ubaldo'].every(name => validNumber(contacts[name]))) throw new Error('Invalid contacts');
     return contacts;
+  };
+
+  const enableContactButtons = () => {
+    contactButtons.forEach(button => {
+      button.disabled = !rsvpContacts[button.dataset.contactRecipient];
+    });
   };
 
   const unlockSite = (animate = true) => {
@@ -81,6 +88,7 @@
       const key = await crypto.subtle.importKey('raw', base64ToBytes(storedKey), { name: 'AES-GCM' }, true, ['encrypt', 'decrypt']);
       guestDirectory = await decryptDirectory(key);
       rsvpContacts = await decryptContacts(key);
+      enableContactButtons();
       unlockSite(false);
     } catch {
       sessionStorage.removeItem(ACCESS_KEY);
@@ -105,6 +113,7 @@
       const key = await deriveDirectoryKey(submittedPassword);
       guestDirectory = await decryptDirectory(key);
       rsvpContacts = await decryptContacts(key);
+      enableContactButtons();
       const rawKey = await crypto.subtle.exportKey('raw', key);
       sessionStorage.setItem(DIRECTORY_KEY, bytesToBase64(rawKey));
       sessionStorage.setItem(ACCESS_KEY, 'granted');
@@ -129,6 +138,14 @@
     event.currentTarget.textContent = visible ? 'Mostra' : 'Nascondi';
     event.currentTarget.setAttribute('aria-label', visible ? 'Mostra password' : 'Nascondi password');
     passwordInput.focus();
+  });
+
+  contactButtons.forEach(button => {
+    button.addEventListener('click', () => {
+      const phoneNumber = rsvpContacts[button.dataset.contactRecipient];
+      if (!phoneNumber) return;
+      window.location.href = `tel:+${phoneNumber}`;
+    });
   });
 
   document.querySelector('#lock-site').addEventListener('click', () => {
