@@ -7,6 +7,7 @@
   const DIRECTORY_DATA = window.WEDDING_GUEST_DIRECTORY;
   const encoder = new TextEncoder();
   const decoder = new TextDecoder();
+  const fireworksCanvas = document.querySelector('#fireworks');
   const gate = document.querySelector('#gate');
   const site = document.querySelector('#site');
   const passwordForm = document.querySelector('#password-form');
@@ -15,6 +16,7 @@
   const contactButtons = document.querySelectorAll('.contact-call');
   let guestDirectory = [];
   let rsvpContacts = {};
+  let fireworksFrame = 0;
 
   const base64ToBytes = (value) => Uint8Array.from(atob(value), character => character.charCodeAt(0));
   const bytesToBase64 = (value) => btoa(String.fromCharCode(...new Uint8Array(value)));
@@ -69,11 +71,112 @@
     });
   };
 
+  const launchFireworks = () => {
+    if (!fireworksCanvas || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const context = fireworksCanvas.getContext('2d');
+    if (!context) return;
+
+    window.cancelAnimationFrame(fireworksFrame);
+    const width = window.innerWidth;
+    const height = window.innerHeight;
+    const pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
+    fireworksCanvas.width = Math.round(width * pixelRatio);
+    fireworksCanvas.height = Math.round(height * pixelRatio);
+    context.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
+    fireworksCanvas.classList.add('is-active');
+
+    const colors = ['#082a68', '#17417f', '#294f43', '#3f6655'];
+    const burstPositions = [
+      { x: .18, y: .25, delay: 0 },
+      { x: .76, y: .2, delay: 180 },
+      { x: .48, y: .37, delay: 360 },
+      { x: .27, y: .5, delay: 570 },
+      { x: .82, y: .46, delay: 760 }
+    ];
+    const particles = [];
+    const startedAt = performance.now();
+
+    const createBurst = (burst) => {
+      const originX = width * burst.x;
+      const originY = height * burst.y;
+      const particleCount = width < 600 ? 34 : 46;
+      for (let index = 0; index < particleCount; index += 1) {
+        const angle = (Math.PI * 2 * index / particleCount) + (Math.random() * .12);
+        const speed = 1.8 + Math.random() * 3.4;
+        const maxLife = 58 + Math.random() * 28;
+        particles.push({
+          x: originX,
+          y: originY,
+          velocityX: Math.cos(angle) * speed,
+          velocityY: Math.sin(angle) * speed,
+          life: maxLife,
+          maxLife,
+          size: 1.4 + Math.random() * 1.8,
+          color: colors[Math.floor(Math.random() * colors.length)]
+        });
+      }
+    };
+
+    const draw = (now) => {
+      const elapsed = now - startedAt;
+      context.clearRect(0, 0, width, height);
+      burstPositions.forEach(burst => {
+        if (!burst.launched && elapsed >= burst.delay) {
+          burst.launched = true;
+          createBurst(burst);
+        }
+      });
+
+      for (let index = particles.length - 1; index >= 0; index -= 1) {
+        const particle = particles[index];
+        particle.x += particle.velocityX;
+        particle.y += particle.velocityY;
+        particle.velocityX *= .987;
+        particle.velocityY = particle.velocityY * .987 + .035;
+        particle.life -= 1;
+        if (particle.life <= 0) {
+          particles.splice(index, 1);
+          continue;
+        }
+        context.globalAlpha = Math.max(0, particle.life / particle.maxLife);
+        context.fillStyle = particle.color;
+        context.beginPath();
+        context.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
+        context.fill();
+      }
+      context.globalAlpha = 1;
+
+      if (elapsed < 2400 || particles.length > 0) {
+        fireworksFrame = window.requestAnimationFrame(draw);
+      } else {
+        context.clearRect(0, 0, width, height);
+        fireworksCanvas.classList.remove('is-active');
+      }
+    };
+
+    fireworksFrame = window.requestAnimationFrame(draw);
+  };
+
+  const resetOpeningPosition = () => {
+    if (window.location.hash) {
+      window.history.replaceState(null, '', `${window.location.pathname}${window.location.search}`);
+    }
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+    window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+  };
+
   const unlockSite = (animate = true) => {
+    if (animate) resetOpeningPosition();
     document.body.classList.remove('is-locked');
     site.removeAttribute('aria-hidden');
     site.classList.add('is-visible');
     if (animate) {
+      window.requestAnimationFrame(() => {
+        resetOpeningPosition();
+        window.requestAnimationFrame(resetOpeningPosition);
+      });
+      launchFireworks();
       gate.classList.add('is-leaving');
       window.setTimeout(() => { gate.hidden = true; }, 850);
     } else {
@@ -553,7 +656,7 @@
     const phoneNumber = rsvpContacts[button.dataset.rsvpRecipient];
     if (!phoneNumber || !pendingRsvpMessage) {
       closeRecipientDialog();
-      setRsvpStatus('Non è stato possibile aprire WhatsApp. Bloccate e riaprite il sito, poi riprovate.', true);
+      setRsvpStatus('Se non riuscite ad aprire WhatsApp o a inviare il messaggio, contattate direttamente Melissa o Antonio.', true);
       return;
     }
     window.open(`https://wa.me/${phoneNumber}?text=${encodeURIComponent(pendingRsvpMessage)}`, '_blank', 'noopener');
